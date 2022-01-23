@@ -2,6 +2,8 @@ services:
   api:
     container_name: node3tier-api
     build: ./api
+    ports:
+      - "3000:3000"
     environment:
       PORT: 3000
       DB: node3tierapp2
