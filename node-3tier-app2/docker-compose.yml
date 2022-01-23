@@ -1,0 +1,30 @@
+services:
+  api:
+    container_name: node3tier-api
+    build: ./api
+    environment:
+      PORT: 3000
+      DB: node3tierapp2
+      DBUSER: node3tierapp2
+      DBPASS: thisisunsafe
+      DBHOST: db
+      DBPORT: 5432
+
+  web:
+    container_name: node3tier-web
+    build: ./web
+    ports:
+      - "80:8080"
+    environment:
+      PORT: 8080
+      API_HOST: http://api:3000
+      NODE_ENV: development
+
+  db:
+    container_name: node3tier-db
+    image: postgres:14
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: thisisunsafe
+      POSTGRES_USER: node3tierapp2
+      POSTGRES_DB: node3tierapp2
