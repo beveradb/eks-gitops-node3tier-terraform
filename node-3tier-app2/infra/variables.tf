@@ -38,11 +38,6 @@ variable "public_subnets" {
   default     = ["10.0.16.0/20", "10.0.48.0/20", "10.0.80.0/20"]
 }
 
-variable "kubeconfig_path" {
-  description = "Directory to write kubectl config file. Note, this will overwrite any existing config file in this path!"
-  default     = "~/.kube"
-}
-
 variable "k8s_version" {
   description = "Kubernetes version. Defaults to EKS Cluster Kubernetes version."
   default     = ""

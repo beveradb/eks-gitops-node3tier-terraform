@@ -10,10 +10,10 @@ terraform {
   # If you're attempting to use this in a completely clean/empty AWS account or have never provisioned these before,
   # Use the ./remote-tfstate terraform module (which uses local state file) to create them first!
   backend "s3" {
-    region         = "us-east-1" # Backend config: set this to the region you specified in ./remote-tfstate
     bucket         = "beveradb-toptal-terraform-state" # Backend config: set this to your chosen TF state bucket name
-    key            = "terraform.tfstate"
+    region         = "us-east-1" # Backend config: set this to the region your DynamoDB lock table is in
     dynamodb_table = "terraform-state-locks"
+    key            = "terraform.tfstate"
     encrypt        = true
   }
 }
@@ -41,6 +41,15 @@ module "vpc" {
   flow_log_retention_days = var.flow_log_retention_days
 }
 
+module "eks" {
+  source          = "./eks"
+  name            = var.name
+  environment     = var.environment
+  k8s_version     = var.k8s_version
+  private_subnets = module.vpc.private_subnets
+  public_subnets  = module.vpc.public_subnets
+}
+
 output "vpc_id" {
   value = module.vpc.id
 }
@@ -55,4 +64,12 @@ output "vpc_private_subnets" {
   value = [
   for subnet in module.vpc.private_subnets : subnet.arn
   ]
+}
+
+output "cluster_id" {
+  value = module.eks.cluster_id
+}
+
+output "cluster_name" {
+  value = module.eks.cluster_name
 }

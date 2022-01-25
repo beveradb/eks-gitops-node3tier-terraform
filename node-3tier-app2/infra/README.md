@@ -15,24 +15,25 @@ The components provisioned include:
     - Cloudwatch Log Group: Define a log group and retention period.
     - IAM Role & Policy: Allow flow logs to publish directly to CloudWatch Logs.
 
-- (WIP)
-- 
+
+- **EKS**: Kubernetes cluster to run the application in, providing capabilities which enable the properties listed further down.
+  - **EKS Cluster IAM Role & Policies**: Allows the EKS cluster and Fargate pods to make AWS API calls to manage resources
+  - **EKS Cluster IAM Policy CloudWatch**: Allow EKS cluster to publish metric data to CloudWatch
+  - **EKS Cluster IAM Policy NLB**: Allow EKS cluster to create network load balancers and security groups
+  - **CloudWatch Log Group**: Creates a place to store logs from the kubernetes cluster
+  - **EKS Cluster**: Control plane for the Kubernetes cluster
+  - **IAM OIDC provider**: [Required](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) to use IAM roles for service accounts
+  - **EKS Node Group IAM Role & Policies**: Allows EKS node kubelet daemon to make AWS API calls to manage resources
+  - **EKS Node Group**: To automate the provisioning and lifecycle management of EC2 instances as Kubernetes worker nodes
+  - **Fargate Pod Execution Role & Policy**: Allows running pods on AWS Fargate
+  - **Fargate Profile**: Specifies which pods use Fargate when launched
 
 ## Properties
 
 This architecture has been designed to provide the following properties:
 - (WIP)
-- 
 
-### Spot instances
-
-Note, this EKS cluster is configured to use Spot Instances, to save up to 90% vs. On-Demand prices.
-
-This cost saving comes with the acceptance that nodes may be interrupted by AWS at any time with a two-minute warning before instances are terminated.
-
-These interruptions are handled by the AWS Node Termination Handler, providing a connection between termination requests from AWS to Kubernetes nodes. This allows us to gracefully drain nodes before termination.
-
-## First-Time Terraform Bootstrap
+## ⚠️ Note: First-Time Terraform Bootstrap
 
 If you're using terraform for the first time in a clean AWS account, or have no existing S3 bucket for terraform state, you'll need to provision the terraform state S3 bucket and DynamoDB table before using the main module.
 
@@ -43,36 +44,15 @@ If you're using terraform for the first time in a clean AWS account, or have no 
 - `tf init`
 - `tf apply`
 
+If you're using this module in an AWS account which has an existing terraform state bucket and DynamoDB lock table:
+- Edit the `backend "s3"` config section in `main.tf`, updating `bucket`, `region` and `dynamodb_table` values to match your existing state location.
+
 ## Creation of primary resources
+- `terraform init`
+- `terraform apply`
 
-Run terraform:
-```
-terraform init
-terraform apply
-```
+You can then generate a `kubeconfig` file, allowing you to run kubectl commands locally against the provisioned Kubernetes cluster:
+- `aws eks update-kubeconfig --region us-east-1 --name <cluster-name>`
 
-You can use the `-var-file` option to pass in customized parameters to terraform plan/apply:
-```
-terraform plan -var-file default.tfvars
-terraform apply -var-file default.tfvars
-```
-
-## Clean up
-Run terraform:
-```
-terraform destroy
-```
-
-Again, use the `-var-file` option to pass in customized parameters to terraform destroy:
-```
-terraform destroy -var-file default.tfvars
-```
-
-## ⚠️ Warning: Terraform state file!
-
-The Terraform state file is critical to you being able to reliably modify or delete these resources, and contains secrets (e.g. the plaintext database password).
-
-This Terraform module is currently configured to output that state file to the default location, which is `terraform.tfstate` in the current working directory.
-
-Ideally this state file should be stored and updated in a secure location, such as a carefully restricted S3 bucket using the S3 backend for 
-
+## Destroy / clean up all resources 
+- `terraform destroy`
