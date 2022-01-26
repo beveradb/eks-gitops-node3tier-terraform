@@ -70,6 +70,10 @@ module "ssl" {
   app_domain = "beveradb.us"
 }
 
+module "cd" {
+  source = "./cd"
+}
+
 output "vpc_id" {
   value = module.vpc.id
 }
