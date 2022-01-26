@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: default
+  labels:
+    app: webdemo
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: webdemo
+
+  template:
+    metadata:
+      labels:
+        app: webdemo
+
+    spec:
+      containers:
+        - name: webdemo
+          image: nikovirtala/whalesay
+          ports:
+            - containerPort: 8080
