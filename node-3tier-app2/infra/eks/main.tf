@@ -1,4 +1,3 @@
-
 ### EKS Cluster IAM Role & Policies
 
 resource "aws_iam_role" "eks_cluster_role" {
@@ -303,4 +302,12 @@ output "cluster_id" {
 output "cluster_name" {
   description = "Name of the created cluster"
   value       = aws_eks_cluster.main.name
+}
+
+output "kubernetes_params" {
+  value = {
+    host                   = data.aws_eks_cluster.cluster.endpoint
+    token                  = data.aws_eks_cluster_auth.cluster.token
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority[0].data)
+  }
 }

@@ -12,14 +12,6 @@ data "aws_eks_cluster_auth" "cluster" {
 
 data "aws_caller_identity" "current" {}
 
-provider "helm" {
-  kubernetes {
-    host                   = data.aws_eks_cluster.cluster.endpoint
-    token                  = data.aws_eks_cluster_auth.cluster.token
-    cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority[0].data)
-  }
-}
-
 ### ALB Controller IAM Role & Policies:
 
 resource "aws_iam_role" "eks_alb_ingress_controller" {

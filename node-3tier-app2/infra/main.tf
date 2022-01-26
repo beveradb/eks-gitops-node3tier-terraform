@@ -50,6 +50,14 @@ module "eks" {
   public_subnets  = module.vpc.public_subnets
 }
 
+provider "helm" {
+  kubernetes {
+    host                   = module.eks.kubernetes_params.host
+    token                  = module.eks.kubernetes_params.token
+    cluster_ca_certificate = module.eks.kubernetes_params.cluster_ca_certificate
+  }
+}
+
 module "ingress" {
   source     = "./ingress"
   region     = var.region
