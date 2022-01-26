@@ -3,6 +3,11 @@ variable "name" {
   default     = "node3tier"
 }
 
+variable "app_domain" {
+  description = "Domain name which the app should be served at. Hosted zone should already exist with domain nameservers configured correctly."
+  default     = "beveradb.us"
+}
+
 variable "environment" {
   description = "Name of the environment, e.g. prod. Added to tags for all resources"
   default     = "prod"

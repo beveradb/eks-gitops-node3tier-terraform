@@ -30,8 +30,7 @@ production infrastructure components to run this app.
     - **CloudWatch Log Group**: Creates a place to store logs from the kubernetes cluster
     - **EKS Cluster**: Control plane for the Kubernetes cluster
     - **IAM OIDC
-      provider**: [Required](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html)
-      to use IAM roles for service accounts
+      provider**: [Registers](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html) the EKS cluster OpenID Connect server as a provider for AWS IAM, which allows Kubernetes service accounts to assume AWS IAM roles
     - **EKS Node Group IAM Role & Policies**: Allows EKS node kubelet daemon to make API calls to manage AWS resources
     - **EKS Node Group**: To automate the provisioning and lifecycle management of EC2 instances as Kubernetes worker
       nodes

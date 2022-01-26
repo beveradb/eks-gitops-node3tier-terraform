@@ -57,6 +57,17 @@ module "ingress" {
   cluster_id = module.eks.cluster_id
 }
 
+module "ssl" {
+  source     = "./ssl"
+  app_domain = "beveradb.us"
+}
+
+module "app" {
+  source     = "./app"
+  app_domain = var.app_domain
+  cluster_id = module.eks.cluster_id
+}
+
 output "vpc_id" {
   value = module.vpc.id
 }
@@ -79,4 +90,12 @@ output "cluster_id" {
 
 output "cluster_name" {
   value = module.eks.cluster_name
+}
+
+output "app_load_balancer_url" {
+  value = module.app.app_load_balancer_url
+}
+
+output "app_url_ssl" {
+  value = module.app.app_url_ssl
 }
