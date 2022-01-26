@@ -50,6 +50,13 @@ module "eks" {
   public_subnets  = module.vpc.public_subnets
 }
 
+module "ingress" {
+  source     = "./ingress"
+  region     = var.region
+  vpc_id     = module.vpc.id
+  cluster_id = module.eks.cluster_id
+}
+
 output "vpc_id" {
   value = module.vpc.id
 }
