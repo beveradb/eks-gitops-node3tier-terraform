@@ -21,6 +21,6 @@ spec:
     spec:
       containers:
         - name: webdemo
-          image: nikovirtala/whalesay
+          image: beveradb/dogsay:latest
           ports:
             - containerPort: 8080
