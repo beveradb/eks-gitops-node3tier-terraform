@@ -81,3 +81,14 @@ resource "helm_release" "aws_load_balancer_controller" {
     }
   }
 }
+
+### External-DNS Helm Chart
+
+resource "helm_release" "external_dns" {
+  name            = "external-dns"
+  chart           = "external-dns"
+  version         = "1.7.1"
+  repository      = "https://kubernetes-sigs.github.io/external-dns"
+  namespace       = "kube-system"
+  cleanup_on_fail = true
+}

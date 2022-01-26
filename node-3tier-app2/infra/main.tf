@@ -92,10 +92,6 @@ output "cluster_name" {
   value = module.eks.cluster_name
 }
 
-output "app_load_balancer_url" {
-  value = module.app.app_load_balancer_url
-}
-
 output "app_url_ssl" {
   value = module.app.app_url_ssl
 }

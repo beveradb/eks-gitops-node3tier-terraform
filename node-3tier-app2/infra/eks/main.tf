@@ -166,6 +166,41 @@ resource "aws_iam_role" "eks_node_group_role" {
 POLICY
 }
 
+resource "aws_iam_policy" "AmazonRoute53ExternalDNSPolicy" {
+  name   = "AmazonRoute53ExternalDNSPolicy"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "route53:ChangeResourceRecordSets"
+      ],
+      "Resource": [
+        "arn:aws:route53:::hostedzone/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "route53:ListHostedZones",
+        "route53:ListResourceRecordSets"
+      ],
+      "Resource": [
+        "*"
+      ]
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "AmazonRoute53ExternalDNSPolicy" {
+  policy_arn = aws_iam_policy.AmazonRoute53ExternalDNSPolicy.arn
+  role       = aws_iam_role.eks_node_group_role.name
+}
+
 resource "aws_iam_role_policy_attachment" "AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.eks_node_group_role.name
@@ -190,9 +225,9 @@ resource "aws_eks_node_group" "main" {
   subnet_ids      = var.private_subnets.*.id
 
   scaling_config {
-    desired_size = 2
-    max_size     = 4
-    min_size     = 2
+    desired_size = 3
+    max_size     = 6
+    min_size     = 3
   }
 
   instance_types = ["t2.micro"]

@@ -92,6 +92,7 @@ resource "kubernetes_ingress" "app" {
       "alb.ingress.kubernetes.io/listen-ports"    = "[{\"HTTP\": 80}, {\"HTTPS\": 443}]"
       "alb.ingress.kubernetes.io/ssl-redirect"    = "443"
       "alb.ingress.kubernetes.io/certificate-arn" = data.aws_acm_certificate.app.arn
+      "external-dns.alpha.kubernetes.io/hostname" = var.app_domain
     }
     labels      = {
       "app" = "webdemo-ingress"
@@ -115,38 +116,6 @@ resource "kubernetes_ingress" "app" {
   depends_on = [kubernetes_service.app]
 }
 
-# Look up the ALB which should have been created by the ALB ingress controller,
-# so we can reference it below in the Route53 alias record
-data "aws_lb" "app_alb" {
-  tags = {
-    "ingress.k8s.aws/stack" = "default/webdemo-ingress"
-  }
-
-  depends_on = [kubernetes_ingress.app]
-}
-
-# Look up the public DNS zone, which is assumed to have been already created manually in Route53
-data "aws_route53_zone" "app_domain" {
-  name         = var.app_domain
-  private_zone = false
-}
-
-# Create Route53 alias record pointing to the ALB
-resource "aws_route53_record" "app" {
-  zone_id = data.aws_route53_zone.app_domain.zone_id
-  name    = data.aws_route53_zone.app_domain.name
-  type    = "A"
-  alias {
-    name                   = data.aws_lb.app_alb.dns_name
-    zone_id                = data.aws_lb.app_alb.zone_id
-    evaluate_target_health = false
-  }
-}
-
-output "app_load_balancer_url" {
-  value = "http://${data.aws_lb.app_alb.dns_name}"
-}
-
 output "app_url_ssl" {
-  value = "https://${aws_route53_record.app.fqdn}"
+  value = "https://${var.app_domain}"
 }
