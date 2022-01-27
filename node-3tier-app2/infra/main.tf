@@ -74,6 +74,11 @@ module "cd" {
   source = "./cd"
 }
 
+module "ecr" {
+  source = "./ecr"
+  name   = var.name
+}
+
 output "vpc_id" {
   value = module.vpc.id
 }
