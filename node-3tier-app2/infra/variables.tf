@@ -43,6 +43,11 @@ variable "public_subnets" {
   default     = ["10.0.16.0/20", "10.0.48.0/20", "10.0.80.0/20"]
 }
 
+variable "database_subnets" {
+  description = "List of CIDRs for public subnets in your VPC, must be set if the cidr variable is defined, needs to match number of AZs"
+  default     = ["10.0.96.0/20", "10.0.112.0/20", "10.0.128.0/20"]
+}
+
 variable "k8s_version" {
   description = "Kubernetes version. Defaults to EKS Cluster Kubernetes version."
   default     = ""

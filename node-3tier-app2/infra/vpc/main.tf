@@ -39,6 +39,17 @@ resource "aws_eip" "nat" {
   }
 }
 
+resource "aws_subnet" "database" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = element(var.database_subnets, count.index)
+  availability_zone = element(var.availability_zones, count.index)
+  count             = length(var.database_subnets)
+
+  tags = {
+    Name = "${var.name}-${var.environment}-database-subnet-${format("%03d", count.index+1)}",
+  }
+}
+
 resource "aws_subnet" "private" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = element(var.private_subnets, count.index)
@@ -80,6 +91,12 @@ resource "aws_route" "public" {
   gateway_id             = aws_internet_gateway.main.id
 }
 
+resource "aws_route_table_association" "public" {
+  count          = length(var.public_subnets)
+  subnet_id      = element(aws_subnet.public.*.id, count.index)
+  route_table_id = aws_route_table.public.id
+}
+
 resource "aws_route_table" "private" {
   count  = length(var.private_subnets)
   vpc_id = aws_vpc.main.id
@@ -102,10 +119,26 @@ resource "aws_route_table_association" "private" {
   route_table_id = element(aws_route_table.private.*.id, count.index)
 }
 
-resource "aws_route_table_association" "public" {
-  count          = length(var.public_subnets)
-  subnet_id      = element(aws_subnet.public.*.id, count.index)
-  route_table_id = aws_route_table.public.id
+resource "aws_route_table" "database" {
+  count  = length(var.database_subnets)
+  vpc_id = aws_vpc.main.id
+
+  tags = {
+    Name = "${var.name}-${var.environment}-routing-table-database-${format("%03d", count.index+1)}"
+  }
+}
+
+resource "aws_route" "database" {
+  count                  = length(compact(var.database_subnets))
+  route_table_id         = element(aws_route_table.database.*.id, count.index)
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id         = element(aws_nat_gateway.main.*.id, count.index)
+}
+
+resource "aws_route_table_association" "database" {
+  count          = length(var.database_subnets)
+  subnet_id      = element(aws_subnet.database.*.id, count.index)
+  route_table_id = element(aws_route_table.database.*.id, count.index)
 }
 
 resource "aws_flow_log" "main" {
@@ -178,4 +211,8 @@ output "public_subnets" {
 
 output "private_subnets" {
   value = aws_subnet.private
+}
+
+output "database_subnets" {
+  value = aws_subnet.database
 }

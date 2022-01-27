@@ -37,6 +37,7 @@ module "vpc" {
   cidr                    = var.cidr
   private_subnets         = var.private_subnets
   public_subnets          = var.public_subnets
+  database_subnets        = var.database_subnets
   availability_zones      = var.availability_zones
   flow_log_retention_days = var.flow_log_retention_days
 }
@@ -79,6 +80,14 @@ module "ecr" {
   name   = var.name
 }
 
+module "rds" {
+  source              = "./rds"
+  name                = var.name
+  region              = var.region
+  vpc_id              = module.vpc.id
+  database_subnet_ids = module.vpc.database_subnets[*].id
+}
+
 output "vpc_id" {
   value = module.vpc.id
 }
@@ -105,4 +114,28 @@ output "cluster_name" {
 
 output "app_url" {
   value = "https://${var.app_domain}"
+}
+
+output "ecr_access_key_id" {
+  value = module.ecr.ecr_access_key_id
+}
+
+output "ecr_repo_name" {
+  value = module.ecr.ecr_repo_name
+}
+
+output "ecr_repository_url" {
+  value = module.ecr.ecr_repository_url
+}
+
+output "db_instance_address" {
+  value = module.rds.db_instance_address
+}
+
+output "db_instance_endpoint" {
+  value = module.rds.db_instance_endpoint
+}
+
+output "db_instance_port" {
+  value = module.rds.db_instance_port
 }

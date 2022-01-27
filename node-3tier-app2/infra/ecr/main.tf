@@ -39,6 +39,28 @@ module "ecr_nested" {
   kms_key          = ""
 }
 
+resource "aws_iam_user" "ecr_user" {
+  name = "${var.name}-ecr-user"
+  path = "/system/"
+}
+
+resource "aws_iam_access_key" "ecr_key" {
+  user = aws_iam_user.ecr_user.name
+}
+
+resource "aws_iam_user_policy_attachment" "AmazonEC2ContainerRegistryPowerUser" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+  user       = aws_iam_user.ecr_user.name
+}
+
+output "ecr_access_key_id" {
+  value = aws_iam_access_key.ecr_key.id
+}
+
+output "ecr_access_key_secret" {
+  value = aws_iam_access_key.ecr_key.secret
+}
+
 output "ecr_repo_name" {
   description = "The name of the repository"
   value       = module.ecr_nested.ecr_repo_name
