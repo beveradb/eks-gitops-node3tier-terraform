@@ -88,11 +88,6 @@ module "rds" {
   database_subnet_ids = module.vpc.database_subnets[*].id
 }
 
-module "jenkinsci" {
-  source   = "./jenkinsci"
-  hostname = "jenkins.beveradb.us"
-}
-
 output "vpc_id" {
   value = module.vpc.id
 }
