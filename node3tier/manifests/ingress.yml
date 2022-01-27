@@ -11,19 +11,17 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
     external-dns.alpha.kubernetes.io/hostname: beveradb.us
 spec:
+  defaultBackend:
+    service:
+      name: service-node3tier-web
+      port:
+        number: 80
   rules:
     - host: beveradb.us
       http:
         paths:
-          - path: /*
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: service-node3tier-web
-                port:
-                  number: 80
-          - path: /api/*
-            pathType: ImplementationSpecific
+          - path: /api
+            pathType: Prefix
             backend:
               service:
                 name: service-node3tier-api
