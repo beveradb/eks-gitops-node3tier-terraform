@@ -48,8 +48,8 @@ resource "aws_iam_access_key" "ecr_key" {
   user = aws_iam_user.ecr_user.name
 }
 
-resource "aws_iam_user_policy_attachment" "AmazonEC2ContainerRegistryPowerUser" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
+resource "aws_iam_user_policy_attachment" "AmazonEC2ContainerRegistryFullAccess" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
   user       = aws_iam_user.ecr_user.name
 }
 

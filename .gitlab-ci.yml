@@ -1,0 +1,33 @@
+variables:
+  APP_NAME: node3tier
+  DOCKER_REGISTRY: 403070863012.dkr.ecr.us-east-1.amazonaws.com
+  DOCKER_HOST: tcp://docker:2375
+  AWS_DEFAULT_REGION: us-east-1
+
+.publish:
+  image:
+    name: amazon/aws-cli
+    entrypoint: [ "" ]
+  services:
+    - docker:dind
+  before_script:
+    - amazon-linux-extras install docker
+    - aws --version
+    - docker --version
+  script:
+    - cd node-3tier-app2/$SERVICE_NAME
+    - docker build -t $DOCKER_REGISTRY/$APP_NAME:$SERVICE_NAME-$CI_PIPELINE_IID .
+    - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
+    - docker push $DOCKER_REGISTRY/$APP_NAME:$SERVICE_NAME-$CI_PIPELINE_IID
+
+publish-api:
+  variables:
+    SERVICE_NAME: api
+  extends:
+    - .publish
+
+publish-web:
+  variables:
+    SERVICE_NAME: web
+  extends:
+    - .publish

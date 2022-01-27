@@ -1,26 +1,54 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: node3tier-api
   namespace: default
   labels:
-    app: webdemo
+    app: node3tier-api
 
 spec:
   replicas: 3
 
   selector:
     matchLabels:
-      app: webdemo
+      app: node3tier-api
 
   template:
     metadata:
       labels:
-        app: webdemo
+        app: node3tier-api
 
     spec:
       containers:
-        - name: webdemo
-          image: beveradb/dogsay:latest
+        - name: node3tier-api
+          image: 403070863012.dkr.ecr.us-east-1.amazonaws.com/node3tier:api-20220127034400
           ports:
-            - containerPort: 8080
+            - containerPort: 3000
+
+---
+webVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node3tier-web
+  namespace: default
+  labels:
+    app: node3tier-web
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: node3tier-web
+
+  template:
+    metadata:
+      labels:
+        app: node3tier-web
+
+    spec:
+      containers:
+        - name: node3tier-web
+          image: 403070863012.dkr.ecr.us-east-1.amazonaws.com/node3tier:web-20220127034400
+          ports:
+            - containerPort: 3000
