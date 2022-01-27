@@ -8,6 +8,11 @@ metadata:
 
 spec:
   replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 0
 
   selector:
     matchLabels:
@@ -24,6 +29,24 @@ spec:
           image: 403070863012.dkr.ecr.us-east-1.amazonaws.com/node3tier:api-20220127034400
           ports:
             - containerPort: 3000
+          env:
+            - name: DB
+              value: "node3tier"
+            - name: DBUSER
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: DB_USER
+            - name: DBPASS
+              valueFrom:
+                secretKeyRef:
+                  name: db-secrets
+                  key: DB_PWD
+            - name: DBHOST
+              value: "node3tier-postgres.ccyfjsqzemed.us-east-1.rds.amazonaws.com"
+            - name: DBPORT
+              value: "5432"
+
 
 ---
 apiVersion: apps/v1
@@ -36,6 +59,11 @@ metadata:
 
 spec:
   replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3
+      maxUnavailable: 0
 
   selector:
     matchLabels:
@@ -52,3 +80,9 @@ spec:
           image: 403070863012.dkr.ecr.us-east-1.amazonaws.com/node3tier:web-20220127034400
           ports:
             - containerPort: 3000
+          env:
+            - name: API_HOST
+              value: "https://beveradb.us"
+            - name: NODE_ENV
+              value: "production"
+

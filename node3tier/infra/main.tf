@@ -75,6 +75,10 @@ module "fluxcd" {
   source = "./fluxcd"
 }
 
+module "sealedsecrets" {
+  source = "./sealedsecrets"
+}
+
 module "ecr" {
   source = "./ecr"
   name   = var.name
