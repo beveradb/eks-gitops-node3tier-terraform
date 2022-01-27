@@ -20,7 +20,7 @@ variables:
     - aws --version
     - docker --version
   script:
-    - cd $IMAGE_NAME
+    - cd node-3tier-app2/$IMAGE_NAME
     - docker build -t $DOCKER_REGISTRY/$APP_NAME-$IMAGE_NAME:$CI_PIPELINE_IID .
     - aws ecr get-login-password | docker login --username AWS --password-stdin $DOCKER_REGISTRY
     - docker push $DOCKER_REGISTRY/$APP_NAME-$IMAGE_NAME:$CI_PIPELINE_IID
