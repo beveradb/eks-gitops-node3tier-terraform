@@ -126,7 +126,7 @@ git:
   # Append "[ci skip]" to commit messages so that CI will skip builds
   ciSkip: false
   # Period at which to poll git repo for new commits
-  pollInterval: "5m"
+  pollInterval: "1m"
   # Duration after which git operations time out
   timeout: "20s"
   # The secret name can be used to supply your own SSH key, instead of
@@ -182,7 +182,7 @@ registry:
   # Duration to keep cached image info. Must be < 1 month. (Deprecated)
   cacheExpiry:
   # Disable registry scanning completely
-  disableScanning: false
+  disableScanning: true
   # Do not scan images that match these glob expressions
   excludeImage:
   # Only scan images that match these glob expressions
@@ -206,7 +206,7 @@ registry:
     configFileName: /dockercfg/config.json
 
 memcached:
-  enabled: true
+  enabled: false
   hostnameOverride:
   repository: memcached
   tag: 1.6.12-alpine
@@ -310,7 +310,7 @@ prometheus:
     additionalLabels: {}
 
 syncGarbageCollection:
-  enabled: false
+  enabled: true
   dry: false
 
 # Enables manifest generation
