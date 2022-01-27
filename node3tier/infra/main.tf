@@ -71,8 +71,8 @@ module "ssl" {
   app_domain = "beveradb.us"
 }
 
-module "cd" {
-  source = "./cd"
+module "fluxcd" {
+  source = "./fluxcd"
 }
 
 module "ecr" {
@@ -86,6 +86,11 @@ module "rds" {
   region              = var.region
   vpc_id              = module.vpc.id
   database_subnet_ids = module.vpc.database_subnets[*].id
+}
+
+module "jenkinsci" {
+  source   = "./jenkinsci"
+  hostname = "jenkins.beveradb.us"
 }
 
 output "vpc_id" {
