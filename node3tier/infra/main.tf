@@ -68,7 +68,7 @@ module "ingress" {
 
 module "ssl" {
   source     = "./ssl"
-  app_domain = "beveradb.us"
+  app_domain = "beveridge.uk"
 }
 
 module "fluxcd" {

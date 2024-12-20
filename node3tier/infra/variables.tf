@@ -5,7 +5,7 @@ variable "name" {
 
 variable "app_domain" {
   description = "Domain name which the app should be served at. Hosted zone should already exist with domain nameservers configured correctly."
-  default     = "beveradb.us"
+  default     = "beveridge.uk"
 }
 
 variable "environment" {
